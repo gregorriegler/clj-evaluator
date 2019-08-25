@@ -6,6 +6,7 @@
   :dependencies [
                  [org.clojure/clojure "1.10.0"]
                  [http-kit "2.3.0"]
+                 [ring "1.7.0"]
                  [clj-http "3.9.1"]]
   :repl-options {:init-ns clj-evaluator.core})
 
