@@ -7,11 +7,14 @@
             [ring.util.request :as request]
             ))
 
+(defn evaluate-code [code]
+  (eval (read-string code)))
+
 (defn handler [req]
   (print (get req :body))
   {:status  200
    :headers {"Content-Type" "text/plain"}
-   :body    (eval (read-string (get req :body)))})
+   :body    (evaluate-code (get req :body))})
 
 (defn request-as-string [handler]
   (fn [request]
