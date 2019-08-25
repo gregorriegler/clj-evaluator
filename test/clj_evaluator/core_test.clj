@@ -11,22 +11,22 @@
   (print (get req :body))
   {:status  200
    :headers {"Content-Type" "text/plain"}
-   :body    (get req :body) })
+   :body    (str (eval (read-string (get req :body))))})
 
-(defn wrap-body-string [handler]
+(defn request-as-string [handler]
   (fn [request]
     (let [body-str (request/body-string request)]
       (handler (assoc request :body body-str)))))
 
 (def app (-> handler
-             wrap-body-string))
+             request-as-string))
 
 (use-fixtures :once (fn [f]
                       (let [server (run-server app {:port 4347})]
                         (try (f) (finally (server))))))
 
 (deftest test-body-string
-  (let [resp (http/post "http://localhost:4347" {:body "hello"})]
+  (let [resp (http/post "http://localhost:4347" {:body "(+ 1 2)"})]
     (is (= (:status resp) 200))
     (is (= (get-in resp [:headers "content-type"]) "text/plain"))
-    (is (= (:body resp) "hello"))))
+    (is (= (:body resp) "3"))))
