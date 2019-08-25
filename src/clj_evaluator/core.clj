@@ -25,3 +25,8 @@
              request-as-string
              response-as-string))
 
+(defn -main []
+  (let [port 8080]
+    (run-server #'app {:port port})
+    (println (str "Running webserver at http://127.0.0.1:" port "/"))))
+
