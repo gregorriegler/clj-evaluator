@@ -11,15 +11,21 @@
   (print (get req :body))
   {:status  200
    :headers {"Content-Type" "text/plain"}
-   :body    (str (eval (read-string (get req :body))))})
+   :body    (eval (read-string (get req :body)))})
 
 (defn request-as-string [handler]
   (fn [request]
     (let [body-str (request/body-string request)]
       (handler (assoc request :body body-str)))))
 
+(defn response-as-string [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc response :body (str (get response :body))))))
+
 (def app (-> handler
-             request-as-string))
+             request-as-string
+             response-as-string))
 
 (use-fixtures :once (fn [f]
                       (let [server (run-server app {:port 4347})]
